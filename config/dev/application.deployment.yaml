@@ -10,6 +10,13 @@ spec:
       targetPort: 8080
   type: NodePort
 ---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+   name: moments-config
+data:
+ uri: mongodb://host.minikube.internal:27017/moments_db
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -26,14 +33,13 @@ spec:
     spec:
       containers:
         - name: moments
-          image: moments:{{version}}
+          image: moments:0.0.1-SNAPSHOT
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
-          volumeMounts:
-            - name: moments-application-config
-              mountPath: /app/config
-      volumes:
-        - name: moments-application-config
-          configMap:
-            name: moments-config
+          env:
+            - name: MONGO_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: moments-config  
+                  key: uri
