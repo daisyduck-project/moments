@@ -1,6 +1,10 @@
 package com.bagusmwicaksono.daisyduckproject.moments.service;
 
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.bagusmwicaksono.daisyduckproject.moments.controller.dto.PostsDto;
@@ -22,11 +26,21 @@ public class PostsService {
 
     public Flux<PostsDto> getAllPosts(){
         log.info("[PostsService] getAllPosts");
-        return postsRepository.findAllByOrderByPostingDateDesc().map(cred ->{
+        return postsRepository.findAllByOrderByPostingDateDesc(PageRequest.of(0, 10)).map(cred ->{
             PostsDto dto = new PostsDto();
             BeanUtils.copyProperties(cred, dto);
             return dto;
         });
+    }
+    public Mono<Page<PostsDto>> getAllPosts(Pageable pageable){
+        log.info("[PostsService] getAllPosts Pageable");
+        return postsRepository.findAllByOrderByPostingDateDesc(pageable).map(cred ->{
+            PostsDto dto = new PostsDto();
+            BeanUtils.copyProperties(cred, dto);
+            return dto;
+        }).collectList()
+        .zipWith(postsRepository.count())
+        .map(objects -> new PageImpl<>(objects.getT1(), pageable, objects.getT2()));
     }
     public Mono<PostsDto> performCreatePost(PostsDto newDto){
         log.info("[CredentialsService] performCreateCredential");

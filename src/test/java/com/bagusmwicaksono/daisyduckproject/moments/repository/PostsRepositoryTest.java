@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.springframework.data.domain.PageRequest;
 
 import com.bagusmwicaksono.daisyduckproject.moments.model.Posts;
 import com.bagusmwicaksono.daisyduckproject.moments.utils.TestUtils;
@@ -41,7 +42,7 @@ class PostsRepositoryTest {
 
     @Test
     void testFindAllByOrderByPostingDateDesc_WhenSuccess_RetrunCorrectValue() {
-        Flux<Posts> postsFlux = postsRepository.saveAll(postList).thenMany(postsRepository.findAllByOrderByPostingDateDesc());
+        Flux<Posts> postsFlux = postsRepository.saveAll(postList).thenMany(postsRepository.findAllByOrderByPostingDateDesc(PageRequest.of(0, 10)));
         StepVerifier.create(postsFlux)
             .assertNext(Assertions::assertNotNull)
             .assertNext(post ->{

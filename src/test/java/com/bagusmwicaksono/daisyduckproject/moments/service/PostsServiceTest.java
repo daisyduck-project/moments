@@ -1,5 +1,6 @@
 package com.bagusmwicaksono.daisyduckproject.moments.service;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -32,7 +33,7 @@ class PostsServiceTest {
     @Test
     void testGetAllPosts_WhenSuccess_ReturnCorrectValue() throws StreamReadException, DatabindException, IOException {
         List<Posts> postsList = TestUtils.getPostsTestData();
-        when(postsRepository.findAllByOrderByPostingDateDesc()).thenReturn(Flux.fromIterable(postsList));
+        when(postsRepository.findAllByOrderByPostingDateDesc(any())).thenReturn(Flux.fromIterable(postsList));
 
         Flux<PostsDto> postDtoFlux = postsService.getAllPosts();
 
