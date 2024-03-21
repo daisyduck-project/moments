@@ -33,7 +33,7 @@ spec:
     spec:
       containers:
         - name: moments
-          image: gcr.io/daisyduck-reborn/moments
+          image: gcr.io/daisyduck-reborn/moments:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
